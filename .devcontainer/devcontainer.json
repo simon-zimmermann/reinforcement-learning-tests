@@ -1,0 +1,52 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+  "name": "rl-tests",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "build": {
+    // Path is relative to the devcontainer.json file.
+    "dockerfile": "Dockerfile"
+  },
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {},
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "pip3 install --user -r requirements.txt",
+  // Configure tool-specific properties.
+  // "customizations": {},
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "jerrygoyal.shortcut-menu-bar",
+        "github.copilot",
+        "ms-python.flake8",
+        "ms-python.autopep8",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.autopep8"
+        }
+      }
+    }
+  },
+  "hostRequirements": {
+    "gpu": "optional"
+  },
+  "runArgs": [
+    "--gpus",
+    "all",
+    "-e",
+    "DISPLAY=:0", // use with WSL2; possibly install "sudo apt install x11-apps" in WSL2
+    "-e",
+    "NVIDIA_VISIBLE_DEVICES=all",
+    "-e",
+    "NVIDIA_DRIVER_CAPABILITIES=all"
+    //"-e",
+    //"QT_DEBUG_PLUGINS=1"
+  ]
+}
