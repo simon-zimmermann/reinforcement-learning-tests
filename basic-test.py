@@ -39,22 +39,28 @@ if __name__ == "__main__":
     print(f"Current device capability: {torch.cuda.get_device_capability(curr_device)}")
 
     env_id = "CartPole-v1"
-    num_cpu = 4  # Number of processes to use
+    num_env = 16  # Number of processes to use
     # Create the vectorized environment
-    # vec_env = SubprocVecEnv([make_env(env_id, i, render_mode="rgb_array") for i in range(num_cpu)])
+    vec_env = SubprocVecEnv([make_env(env_id, i, render_mode="rgb_array") for i in range(num_env)])
+    model = PPO("MlpPolicy", vec_env, verbose=1)
 
     # Stable Baselines provides you with make_vec_env() helper
     # which does exactly the previous steps for you.
     # You can choose between `DummyVecEnv` (usually faster) and `SubprocVecEnv`
     # env = make_vec_env(env_id, n_envs=num_cpu, seed=0, vec_env_cls=SubprocVecEnv)
 
-    # model.learn(total_timesteps=25_000, progress_bar=True)
+    model.learn(total_timesteps=90_000, progress_bar=True)
+    model.save("testmodel")
+    del model
+
+
+
     # vec_env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
-    vec_env = make_vec_env(env_id, n_envs=4, seed=0)
+    vec_env2 = make_vec_env(env_id, n_envs=4, seed=0)
     # vec_envs = VecFrameStack(vec_env, n_stack=4)
-    model = PPO("MlpPolicy", vec_env, verbose=1)
-    obs = vec_env.reset()
+    model = PPO.load("testmodel", vec_env2)
+    obs = vec_env2.reset()
     for _ in range(1000):
         action, _states = model.predict(obs)
-        obs, rewards, dones, info = vec_env.step(action)
-        vec_env.render("human")
+        obs, rewards, dones, info = vec_env2.step(action)
+        vec_env2.render("human")
